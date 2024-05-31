@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project: CRM Backend</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            background-color: black;
+            color:white;
+        }
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            background-color: #f2f2f2;
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+            color:black;
+        }
+        th {
+            background-color: lightgray;
+        }
+        td.method-get {
+            background-color: #d4edda; /* Light green */
+        }
+        td.method-post {
+            background-color: #d1ecf1; /* Light blue */
+        }
+        td.method-put {
+            background-color: #fff3cd; /* Light yellow */
+        }
+        td.method-delete {
+            background-color: #f8d7da; /* Light red */
+        }
+    </style>
+</head>
+<body>
+    <h1>API v1 Documentation</h1>
+    <p>This is a RESTful API v1 for the the final project "CRM Backend project".</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Method</th>
+                <th>URL</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="method-get">GET</td>
+                <td>/customers/{id}</td>
+                <td>Getting a single customer through a /customers/{id} path</td>
+            </tr>
+            <tr>
+                <td class="method-get">GET</td>
+                <td>/customers</td>
+                <td>Getting all customers through a the /customers path</td>
+            </tr>
+            <tr>
+                <td class="method-post">POST</td>
+                <td>/customers</td>
+                <td>Creating a customer through a /customers path</td>
+            </tr>
+            <tr>
+                <td class="method-put">PUT</td>
+                <td>/customers/{id}</td>
+                <td>Updating a customer through a /customers/{id} path</td>
+            </tr>
+            <tr>
+                <td class="method-delete">DELETE</td>
+                <td>/customers/{id}</td>
+                <td>Deleting a customer through a /customers/{id} path</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

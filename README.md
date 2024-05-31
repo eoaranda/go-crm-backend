@@ -33,7 +33,7 @@ To launch the server, simply run:
 go run main.go
 ```
 
-The server will start on  https://localhost:3000.
+The server will start on  http://localhost:3000.
 
 ## Usage
 

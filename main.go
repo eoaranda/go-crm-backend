@@ -7,10 +7,11 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
-type Contact struct {
+type Customer struct {
 	ID        string `json:"ID"`
 	Name      string `json:"Name"`
 	Role      string `json:"Role"`
@@ -19,7 +20,7 @@ type Contact struct {
 	Contacted bool   `json:"Contacted"`
 }
 
-var contacts = []Contact{
+var customers = []Customer{
 	{
 		ID:        "550e8400-e29b-41d4-a716-446655440000",
 		Name:      "John Doe",
@@ -78,10 +79,10 @@ func getCustomer(w http.ResponseWriter, request *http.Request) {
 	id := mux.Vars(request)["id"]
 
 	// Check if the customer exists
-	for _, contact := range contacts {
-		if contact.ID == id {
+	for _, customer := range customers {
+		if customer.ID == id {
 			w.WriteHeader(http.StatusOK) // set the status code to 200
-			json.NewEncoder(w).Encode(contact)
+			json.NewEncoder(w).Encode(customer)
 			return // return to exit the function when found
 		}
 	}
@@ -95,19 +96,19 @@ func getCustomers(w http.ResponseWriter, request *http.Request) {
 	w.Header().Set("Content-Type", "application/json") // set the content type to json
 	w.Header().Set("X-Powered-By", "Go")               // set the custom header
 	w.WriteHeader(http.StatusOK)                       // set the status code to 200
-	json.NewEncoder(w).Encode(contacts)                // encode the contacts to json and write it to the response writer
+	json.NewEncoder(w).Encode(customers)               // encode the customers to json and write it to the response writer
 }
 
 func addCustomer(w http.ResponseWriter, request *http.Request) {
 	w.Header().Set("Content-Type", "application/json") // set the content type to json
 	w.Header().Set("X-Powered-By", "Go")               // set the custom header
 
-	var newEntry map[string]string
+	var newEntry map[string]interface{}
 	reqBody, _ := io.ReadAll(request.Body)
 	json.Unmarshal(reqBody, &newEntry)
 
-	for _, contact := range contacts {
-		if contact.ID == newEntry["ID"] {
+	for _, customer := range customers {
+		if customer.ID == newEntry["ID"] {
 			w.WriteHeader(http.StatusConflict)
 			json.NewEncoder(w).Encode(map[string]string{"message": "Customer already exists"})
 			return
@@ -115,11 +116,13 @@ func addCustomer(w http.ResponseWriter, request *http.Request) {
 	}
 
 	// if the customer does not exist, add it to the slice
-	phoneNumber, _ := strconv.Atoi(newEntry["Phone"])
-	contacted := newEntry["Contacted"] == "true"
-	contacts = append(contacts, Contact{newEntry["ID"], newEntry["Name"], newEntry["Role"], newEntry["Email"], phoneNumber, contacted})
+	id, _ := uuid.NewRandom()                      // Generate a new Version 4 UUID
+	phoneFloat64, _ := newEntry["Phone"].(float64) // Convert Phone to int
+	phoneNumber := int(phoneFloat64)
+	contacted, _ := newEntry["Contacted"].(bool) // Convert Contacted to bool
+	customers = append(customers, Customer{id.String(), newEntry["Name"].(string), newEntry["Role"].(string), newEntry["Email"].(string), phoneNumber, contacted})
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(contacts)
+	json.NewEncoder(w).Encode(customers)
 }
 
 func updateCustomer(w http.ResponseWriter, request *http.Request) {
@@ -137,14 +140,14 @@ func updateCustomer(w http.ResponseWriter, request *http.Request) {
 	json.Unmarshal(reqBody, &newEntry)
 
 	// Check if the customer exists
-	for i, contact := range contacts {
-		if contact.ID == id {
+	for i, customer := range customers {
+		if customer.ID == id {
 			// update the customer in the slice if found
 			phoneNumber, _ := strconv.Atoi(newEntry["Phone"])
 			contacted := newEntry["Contacted"] == "true"
-			contacts[i] = Contact{id, newEntry["Name"], newEntry["Role"], newEntry["Email"], phoneNumber, contacted}
+			customers[i] = Customer{id, newEntry["Name"], newEntry["Role"], newEntry["Email"], phoneNumber, contacted}
 			w.WriteHeader(http.StatusOK) // set the status code to 200
-			json.NewEncoder(w).Encode(contacts)
+			json.NewEncoder(w).Encode(customers)
 			return // return to exit the function when found
 		}
 	}
@@ -162,14 +165,14 @@ func deleteCustomer(w http.ResponseWriter, request *http.Request) {
 	id := mux.Vars(request)["id"]
 
 	// Check if the customer exists
-	for i, contact := range contacts {
-		if contact.ID == id {
+	for i, customer := range customers {
+		if customer.ID == id {
 			// remove the customer from the slice
-			contacts = append(
-				contacts[:i],      //  produces a slice of all elements before index i.
-				contacts[i+1:]...) // produces a slice of all elements after index i.
+			customers = append(
+				customers[:i],      //  produces a slice of all elements before index i.
+				customers[i+1:]...) // produces a slice of all elements after index i.
 			w.WriteHeader(http.StatusOK) // set the status code to 200
-			json.NewEncoder(w).Encode(contacts)
+			json.NewEncoder(w).Encode(customers)
 			return // return to exit the function when found
 		}
 	}

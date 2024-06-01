@@ -48,7 +48,7 @@ Interact with the API using tools like Postman or cURL:
 | PUT    | /customers/{id}     | Update a customer by ID                  |
 | DELETE | /customers/{id}     | Delete a customer by ID                  |
 
-## Contact data sample
+## Customer data sample
 
 ```json
 {
